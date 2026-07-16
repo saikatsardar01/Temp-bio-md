@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DAA Lab Solutions</title>
+<style>
+  :root {
+    --bg: #f7f7fb;
+    --card: #ffffff;
+    --ink: #1e2430;
+    --muted: #5b6472;
+    --accent: #4f46e5;
+    --accent2: #0891b2;
+    --border: #e4e4ee;
+    --code-bg: #1e1e2e;
+    --code-ink: #d7dae0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  header.top {
+    background: linear-gradient(120deg, var(--accent), var(--accent2));
+    color: white;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  header.top h1 { margin: 0 0 8px; font-size: 2rem; }
+  header.top p { margin: 0; opacity: 0.9; }
+  nav.toc {
+    max-width: 960px;
+    margin: -28px auto 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 28px;
+    box-shadow: 0 8px 24px rgba(30,36,48,0.08);
+  }
+  nav.toc h2 { margin-top: 0; font-size: 1.1rem; color: var(--accent); }
+  nav.toc ol { columns: 2; padding-left: 20px; }
+  nav.toc li { margin-bottom: 6px; }
+  nav.toc a { color: var(--ink); text-decoration: none; }
+  nav.toc a:hover { color: var(--accent); text-decoration: underline; }
+  main { max-width: 960px; margin: 0 auto; padding: 0 24px 60px; }
+  section.problem {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 36px;
+    box-shadow: 0 4px 14px rgba(30,36,48,0.05);
+  }
+  section.problem h2 {
+    color: var(--accent);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 10px;
+    margin-top: 0;
+  }
+  section.problem h3 {
+    color: var(--accent2);
+    margin-top: 28px;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .tag {
+    display: inline-block;
+    background: #eef2ff;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  ol.algo li, ul.algo li { margin-bottom: 6px; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0 20px;
+    font-size: 0.92rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th { background: #f0f1fa; }
+  .code-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 10px 0 20px;
+  }
+  @media (max-width: 760px) {
+    .code-tabs { grid-template-columns: 1fr; }
+    nav.toc ol { columns: 1; }
+  }
+  .code-block { border-radius: 10px; overflow: hidden; border: 1px solid #2b2b3d; }
+  .code-label {
+    background: #2b2b3d;
+    color: #cfd3e6;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 6px 12px;
+  }
+  pre {
+    margin: 0;
+    background: var(--code-bg);
+    color: var(--code-ink);
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 0.82rem;
+  }
+  code { font-family: "Fira Code", Consolas, "Courier New", monospace; }
+  .complexity {
+    background: #f0fdfa;
+    border-left: 4px solid var(--accent2);
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+  .complexity table { margin: 8px 0 0; }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    padding: 20px;
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Design &amp; Analysis of Algorithms &mdash; Lab Solutions</h1>
+  <p>Algorithm, C &amp; Python implementation, and time-complexity analysis for all 8 problems</p>
+</header>
+<nav class="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#q1">Fractional Knapsack &mdash; Juice Bar</a></li>
+    <li><a href="#q2">Job Sequencing with Deadlines &mdash; Bakery</a></li>
+    <li><a href="#q3">Binary Search &mdash; Product Catalog</a></li>
+    <li><a href="#q4">Merge Sort &mdash; Exam Scores</a></li>
+    <li><a href="#q5">Dijkstra&rsquo;s Algorithm &mdash; Pharmacy Delivery</a></li>
+    <li><a href="#q6">Floyd&ndash;Warshall &mdash; Inter-Branch Logistics</a></li>
+    <li><a href="#q7">N-Queens (Backtracking) &mdash; Emergency Hubs</a></li>
+    <li><a href="#q8">Matrix Chain Multiplication &mdash; Genomics Pipeline</a></li>
+  </ol>
+</nav>
+<main>
+
+<section class="problem" id="q1">
+  <span class="tag">Greedy Algorithm</span>
+  <h2>1. Fractional Knapsack &mdash; A Small-Scale Juice Bar</h2>
+  <p>Sarah's cooler has capacity <b>15 kg</b>. Each fruit can be taken in any fraction, so the
+  <b>Fractional Knapsack</b> greedy strategy applies: always take as much as possible of the
+  fruit with the highest profit-per-kg first.</p>
+
+  <table>
+    <tr><th>Fruit</th><th>Available (kg)</th><th>Profit/kg (INR)</th></tr>
+    <tr><td>Strawberries</td><td>8</td><td>250</td></tr>
+    <tr><td>Blueberries</td><td>5</td><td>380</td></tr>
+    <tr><td>Raspberries</td><td>6</td><td>320</td></tr>
+    <tr><td>Mangoes</td><td>10</td><td>180</td></tr>
+    <tr><td>Kiwis</td><td>4</td><td>290</td></tr>
+  </table>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Compute ratio<sub>i</sub> = profit_per_kg for every fruit (already given per kg, so no extra division needed).</li>
+    <li>Sort all fruits in <b>decreasing order</b> of profit/kg &rarr; Blueberries(380) &gt; Kiwis(290) &gt; Raspberries(320)&hellip; (sorted: Blueberries, Raspberries, Kiwis, Strawberries, Mangoes).</li>
+    <li>Initialise remaining capacity W = 15, totalProfit = 0.</li>
+    <li>For each fruit in sorted order:
+      <ul>
+        <li>If its full weight &le; remaining capacity &rarr; take it entirely, subtract weight from W, add weight&times;ratio to profit.</li>
+        <li>Else &rarr; take only the fraction that fits (remaining/weight), add fraction&times;weight&times;ratio to profit, set W = 0, stop.</li>
+      </ul>
+    </li>
+    <li>Return total profit.</li>
+  </ol>
+  <p><b>Result for this instance:</b> take Blueberries 5 kg (1900), Raspberries 6 kg (1920), Kiwis 4 kg (1160)
+  &rarr; 15 kg filled &rarr; <b>total profit = 4980 INR</b> (Strawberries/Mangoes are never touched since capacity is exhausted).</p>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct {
+    char name[20];
+    double weight;
+    double profitPerKg;
+} Fruit;
+
+int compare(const void *a, const void *b) {
+    Fruit *f1 = (Fruit *)a;
+    Fruit *f2 = (Fruit *)b;
+    if (f2-&gt;profitPerKg - f1-&gt;profitPerKg &gt; 0) return 1;
+    if (f2-&gt;profitPerKg - f1-&gt;profitPerKg &lt; 0) return -1;
+    return 0;
+}
+
+int main() {
+    Fruit fruits[] = {
+        {&quot;Strawberries&quot;, 8, 250},
+        {&quot;Blueberries&quot;,  5, 380},
+        {&quot;Raspberries&quot;,  6, 320},
+        {&quot;Mangoes&quot;,     10, 180},
+        {&quot;Kiwis&quot;,        4, 290}
+    };
+    int n = 5;
+    double capacity = 15.0;
+
+    qsort(fruits, n, sizeof(Fruit), compare);   /* sort by profit/kg desc */
+
+    double totalProfit = 0.0;
+    printf(&quot;Item Selection:\n&quot;);
+    for (int i = 0; i &lt; n &amp;&amp; capacity &gt; 0; i++) {
+        if (fruits[i].weight &lt;= capacity) {
+            capacity -= fruits[i].weight;
+            totalProfit += fruits[i].weight * fruits[i].profitPerKg;
+            printf(&quot;Take %.2f kg of %s (full)\n&quot;, fruits[i].weight, fruits[i].name);
+        } else {
+            totalProfit += capacity * fruits[i].profitPerKg;
+            printf(&quot;Take %.2f kg of %s (partial)\n&quot;, capacity, fruits[i].name);
+            capacity = 0;
+        }
+    }
+    printf(&quot;Maximum Profit = %.2f INR\n&quot;, totalProfit);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">def fractional_knapsack(capacity, items):
+    # items: list of (name, weight, profit_per_kg)
+    items.sort(key=lambda x: x[2], reverse=True)   # sort by ratio desc
+    total_profit = 0.0
+    remaining = capacity
+    selection = []
+
+    for name, weight, ppk in items:
+        if remaining &lt;= 0:
+            break
+        if weight &lt;= remaining:
+            remaining -= weight
+            total_profit += weight * ppk
+            selection.append((name, weight, &quot;full&quot;))
+        else:
+            total_profit += remaining * ppk
+            selection.append((name, remaining, &quot;partial&quot;))
+            remaining = 0
+
+    return total_profit, selection
+
+
+if __name__ == &quot;__main__&quot;:
+    fruits = [
+        (&quot;Strawberries&quot;, 8, 250),
+        (&quot;Blueberries&quot;,  5, 380),
+        (&quot;Raspberries&quot;,  6, 320),
+        (&quot;Mangoes&quot;,     10, 180),
+        (&quot;Kiwis&quot;,        4, 290),
+    ]
+    capacity = 15
+    profit, chosen = fractional_knapsack(capacity, fruits)
+    for name, w, kind in chosen:
+        print(f&quot;Take {w:.2f} kg of {name} ({kind})&quot;)
+    print(f&quot;Maximum Profit = {profit:.2f} INR&quot;)
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Step</th><th>Cost</th></tr>
+      <tr><td>Sorting n items by ratio</td><td>O(n log n)</td></tr>
+      <tr><td>Greedy scan &amp; selection</td><td>O(n)</td></tr>
+      <tr><td><b>Overall time</b></td><td><b>O(n log n)</b></td></tr>
+      <tr><td>Space</td><td>O(n) (or O(1) extra if sorted in place)</td></tr>
+    </table>
+    <p>The greedy choice is provably optimal for the <i>fractional</i> knapsack (unlike 0/1 knapsack)
+    because items are divisible, so picking the highest-ratio item first never loses potential profit &mdash; proven via the exchange-argument.</p>
+  </div>
+</section>
+
+
+<section class="problem" id="q2">
+  <span class="tag">Greedy Algorithm</span>
+  <h2>2. Job Sequencing with Deadlines &mdash; The Bakery's Daily Rush</h2>
+  <p>Only one oven (single processor), each order takes one time unit (one hour slot), and a
+  job is only useful if completed <i>by</i> its deadline. This is the classic
+  <b>Job Sequencing with Deadlines</b> problem.</p>
+
+  <table>
+    <tr><th>Order</th><th>Deadline (h)</th><th>Profit (INR)</th></tr>
+    <tr><td>C1</td><td>2</td><td>3000</td></tr>
+    <tr><td>C2</td><td>1</td><td>2000</td></tr>
+    <tr><td>C3</td><td>4</td><td>4500</td></tr>
+    <tr><td>C4</td><td>3</td><td>1000</td></tr>
+    <tr><td>C5</td><td>2</td><td>3500</td></tr>
+    <tr><td>C6</td><td>5</td><td>2500</td></tr>
+    <tr><td>C7</td><td>3</td><td>1500</td></tr>
+  </table>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Sort all orders in <b>decreasing order of profit</b>.</li>
+    <li>Let D = maximum deadline among all jobs; create a slot array slot[1..D], all free.</li>
+    <li>For each order (highest profit first): scan slots from min(its deadline, D) down to 1;
+    place the order in the first free slot found (i.e., latest slot &le; deadline). If found, mark slot occupied and add profit.</li>
+    <li>If no free slot &le; deadline exists, the order is skipped (rejected).</li>
+    <li>The filled slots give the optimal schedule; sum of their profits is the maximum total profit.</li>
+  </ol>
+  <p><b>Result for this instance</b> (sorted by profit: C3-4500, C5-3500, C1-3000, C6-2500, C2-2000, C7-1500, C4-1000):
+  Hour1&rarr;C1, Hour2&rarr;C5, Hour3&rarr;C7, Hour4&rarr;C3, Hour5&rarr;C6 &rarr; total profit = 3000+3500+1500+4500+2500 =
+  <b>15000 INR</b> (C2 and C4 are rejected since no free slot remains at or before their deadlines).</p>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+typedef struct {
+    char id[5];
+    int deadline;
+    int profit;
+} Job;
+
+int compare(const void *a, const void *b) {
+    return ((Job *)b)-&gt;profit - ((Job *)a)-&gt;profit;   /* sort by profit desc */
+}
+
+int main() {
+    Job jobs[] = {
+        {&quot;C1&quot;, 2, 3000},
+        {&quot;C2&quot;, 1, 2000},
+        {&quot;C3&quot;, 4, 4500},
+        {&quot;C4&quot;, 3, 1000},
+        {&quot;C5&quot;, 2, 3500},
+        {&quot;C6&quot;, 5, 2500},
+        {&quot;C7&quot;, 3, 1500}
+    };
+    int n = 7;
+    qsort(jobs, n, sizeof(Job), compare);
+
+    int maxDeadline = 0;
+    for (int i = 0; i &lt; n; i++)
+        if (jobs[i].deadline &gt; maxDeadline) maxDeadline = jobs[i].deadline;
+
+    int *slot = (int *)calloc(maxDeadline + 1, sizeof(int));
+    char slotJob[10][5];
+
+    int totalProfit = 0;
+    for (int i = 0; i &lt; n; i++) {
+        int d = jobs[i].deadline;
+        if (d &gt; maxDeadline) d = maxDeadline;
+        for (int t = d; t &gt;= 1; t--) {           /* latest free slot &lt;= deadline */
+            if (slot[t] == 0) {
+                slot[t] = 1;
+                strcpy(slotJob[t], jobs[i].id);
+                totalProfit += jobs[i].profit;
+                break;
+            }
+        }
+    }
+
+    printf(&quot;Scheduled Orders:\n&quot;);
+    for (int t = 1; t &lt;= maxDeadline; t++)
+        if (slot[t]) printf(&quot;Hour slot %d -&gt; %s\n&quot;, t, slotJob[t]);
+    printf(&quot;Maximum Profit = %d INR\n&quot;, totalProfit);
+
+    free(slot);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">def job_sequencing(jobs):
+    # jobs: list of (id, deadline, profit)
+    jobs = sorted(jobs, key=lambda x: x[2], reverse=True)
+    max_deadline = max(j[1] for j in jobs)
+    slot = [None] * (max_deadline + 1)
+    total_profit = 0
+
+    for jid, deadline, profit in jobs:
+        d = min(deadline, max_deadline)
+        for t in range(d, 0, -1):        # latest free slot &lt;= deadline
+            if slot[t] is None:
+                slot[t] = jid
+                total_profit += profit
+                break
+
+    schedule = [(t, slot[t]) for t in range(1, max_deadline + 1) if slot[t]]
+    return schedule, total_profit
+
+
+if __name__ == &quot;__main__&quot;:
+    jobs = [
+        (&quot;C1&quot;, 2, 3000),
+        (&quot;C2&quot;, 1, 2000),
+        (&quot;C3&quot;, 4, 4500),
+        (&quot;C4&quot;, 3, 1000),
+        (&quot;C5&quot;, 2, 3500),
+        (&quot;C6&quot;, 5, 2500),
+        (&quot;C7&quot;, 3, 1500),
+    ]
+    schedule, profit = job_sequencing(jobs)
+    for t, jid in schedule:
+        print(f&quot;Hour slot {t} -&gt; {jid}&quot;)
+    print(f&quot;Maximum Profit = {profit} INR&quot;)
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Step</th><th>Cost</th></tr>
+      <tr><td>Sort n jobs by profit</td><td>O(n log n)</td></tr>
+      <tr><td>Slot search per job (naive linear scan of up to D slots)</td><td>O(n&middot;D) worst case, i.e. O(n&sup2;) when D&asymp;n</td></tr>
+      <tr><td><b>Overall (naive)</b></td><td><b>O(n&sup2;)</b></td></tr>
+      <tr><td>Overall (optimized with Disjoint-Set / Union-Find for slot lookup)</td><td>O(n log n) (sort) + O(n &alpha;(n)) (DSU) &approx; O(n log n)</td></tr>
+      <tr><td>Space</td><td>O(n + D)</td></tr>
+    </table>
+  </div>
+</section>
+
+
+<section class="problem" id="q3">
+  <span class="tag">Divide &amp; Conquer / Searching</span>
+  <h2>3. Binary Search &mdash; Finding a Product in a Large E-commerce Catalog</h2>
+  <p>The catalog is already sorted alphabetically and we know the exact target name
+  ("XtremeGamer Pro 2025"), so <b>Binary Search</b> is the efficient choice instead of a linear scan.</p>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Set low = 0, high = n&minus;1 (n = number of products).</li>
+    <li>While low &le; high:
+      <ul>
+        <li>mid = (low + high) / 2</li>
+        <li>Compare catalog[mid] with the target name (lexicographic string comparison).</li>
+        <li>If equal &rarr; product found at index mid, stop.</li>
+        <li>If catalog[mid] &lt; target &rarr; search right half: low = mid + 1.</li>
+        <li>Else &rarr; search left half: high = mid &minus; 1.</li>
+      </ul>
+    </li>
+    <li>If the loop ends without a match, the product is not in the catalog.</li>
+  </ol>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int binarySearch(char *arr[], int n, char *target) {
+    int low = 0, high = n - 1;
+    while (low &lt;= high) {
+        int mid = low + (high - low) / 2;
+        int cmp = strcmp(arr[mid], target);
+        if (cmp == 0) return mid;
+        else if (cmp &lt; 0) low = mid + 1;
+        else high = mid - 1;
+    }
+    return -1;
+}
+
+int main() {
+    char *catalog[] = {
+        &quot;ProGamer Laptop 2024&quot;,
+        &quot;SpeedBook Air&quot;,
+        &quot;UltraSlim Notebook&quot;,
+        &quot;VisionPad Tablet&quot;,
+        &quot;XtremeGamer Pro 2025&quot;,
+        &quot;YottaDrive SSD&quot;,
+        &quot;ZenPhone 15&quot;
+    };
+    int n = 7;
+    char *target = &quot;XtremeGamer Pro 2025&quot;;
+
+    int idx = binarySearch(catalog, n, target);
+    if (idx != -1)
+        printf(&quot;Found &#x27;%s&#x27; at index %d\n&quot;, target, idx);
+    else
+        printf(&quot;&#x27;%s&#x27; not found\n&quot;, target);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">def binary_search(catalog, target):
+    low, high = 0, len(catalog) - 1
+    while low &lt;= high:
+        mid = (low + high) // 2
+        if catalog[mid] == target:
+            return mid
+        elif catalog[mid] &lt; target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+
+if __name__ == &quot;__main__&quot;:
+    catalog = [
+        &quot;ProGamer Laptop 2024&quot;,
+        &quot;SpeedBook Air&quot;,
+        &quot;UltraSlim Notebook&quot;,
+        &quot;VisionPad Tablet&quot;,
+        &quot;XtremeGamer Pro 2025&quot;,
+        &quot;YottaDrive SSD&quot;,
+        &quot;ZenPhone 15&quot;,
+    ]
+    target = &quot;XtremeGamer Pro 2025&quot;
+    idx = binary_search(catalog, target)
+    if idx != -1:
+        print(f&quot;Found &#x27;{target}&#x27; at index {idx}&quot;)
+    else:
+        print(f&quot;&#x27;{target}&#x27; not found&quot;)
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Case</th><th>Complexity</th></tr>
+      <tr><td>Best case (target is the middle element)</td><td>O(1)</td></tr>
+      <tr><td>Average / Worst case</td><td>O(log n)</td></tr>
+      <tr><td>Space (iterative)</td><td>O(1)</td></tr>
+      <tr><td>Space (recursive)</td><td>O(log n) call stack</td></tr>
+    </table>
+    <p>Each comparison eliminates half the remaining catalog, so for &ldquo;thousands of products&rdquo;
+    (say n = 10,000) only about log&#8322;(10000) &asymp; 14 comparisons are needed &mdash; far better than a linear scan (O(n)).</p>
+  </div>
+</section>
+
+
+<section class="problem" id="q4">
+  <span class="tag">Divide &amp; Conquer / Sorting</span>
+  <h2>4. Merge Sort &mdash; Consolidating and Organizing Student Exam Scores</h2>
+  <p>Two unsorted lists (150 scores from Section A, 120 scores from Section B) must be combined into one
+  ascending list of 270 scores. <b>Merge Sort</b> is ideal: it gives guaranteed O(n log n) performance
+  regardless of the input order, and its core "merge" step is exactly the operation needed to combine two lists.</p>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Concatenate Section A and Section B scores into one array of size n = 150 + 120 = 270 (O(n)).</li>
+    <li>Recursively divide the array into two halves until each sub-array has &le; 1 element.</li>
+    <li>Recursively sort each half (Merge Sort on the halves).</li>
+    <li><b>Merge</b> the two sorted halves back together: repeatedly compare the front elements of both
+    halves and append the smaller one to the result, until both halves are exhausted.</li>
+    <li>The final merged array is the fully sorted combined list of all 270 scores &mdash; from which
+    min, max, and median can be read directly, and grade bands can be computed with a single linear pass.</li>
+  </ol>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    int *L = malloc(n1 * sizeof(int));
+    int *R = malloc(n2 * sizeof(int));
+    for (int i = 0; i &lt; n1; i++) L[i] = arr[l + i];
+    for (int j = 0; j &lt; n2; j++) R[j] = arr[m + 1 + j];
+
+    int i = 0, j = 0, k = l;
+    while (i &lt; n1 &amp;&amp; j &lt; n2)
+        arr[k++] = (L[i] &lt;= R[j]) ? L[i++] : R[j++];
+    while (i &lt; n1) arr[k++] = L[i++];
+    while (j &lt; n2) arr[k++] = R[j++];
+
+    free(L); free(R);
+}
+
+void mergeSort(int arr[], int l, int r) {
+    if (l &lt; r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+int main() {
+    /* Section A (150 scores) + Section B (120 scores) -&gt; combined = 270 scores.
+       Small illustrative subset shown here; in practice load both spreadsheets
+       into one array of size 270 before sorting. */
+    int sectionA[] = {88, 45, 76, 90, 60};
+    int sectionB[] = {55, 99, 70, 40};
+    int nA = 5, nB = 4, n = nA + nB;
+
+    int *combined = malloc(n * sizeof(int));
+    for (int i = 0; i &lt; nA; i++) combined[i] = sectionA[i];
+    for (int i = 0; i &lt; nB; i++) combined[nA + i] = sectionB[i];
+
+    mergeSort(combined, 0, n - 1);
+
+    printf(&quot;Combined sorted scores:\n&quot;);
+    for (int i = 0; i &lt; n; i++) printf(&quot;%d &quot;, combined[i]);
+    printf(&quot;\nMinimum = %d, Maximum = %d\n&quot;, combined[0], combined[n - 1]);
+
+    free(combined);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">def merge_sort(arr):
+    if len(arr) &lt;= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    return merge(left, right)
+
+
+def merge(left, right):
+    result, i, j = [], 0, 0
+    while i &lt; len(left) and j &lt; len(right):
+        if left[i] &lt;= right[j]:
+            result.append(left[i]); i += 1
+        else:
+            result.append(right[j]); j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+
+if __name__ == &quot;__main__&quot;:
+    section_a = [88, 45, 76, 90, 60]   # subset representing 150 scores
+    section_b = [55, 99, 70, 40]       # subset representing 120 scores
+    combined = section_a + section_b
+    sorted_scores = merge_sort(combined)
+    print(&quot;Combined sorted scores:&quot;, sorted_scores)
+    print(f&quot;Minimum = {sorted_scores[0]}, Maximum = {sorted_scores[-1]}&quot;)
+    n = len(sorted_scores)
+    median = (sorted_scores[n // 2] if n % 2 else
+              (sorted_scores[n // 2 - 1] + sorted_scores[n // 2]) / 2)
+    print(f&quot;Median = {median}&quot;)
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Case</th><th>Complexity</th></tr>
+      <tr><td>Best / Average / Worst</td><td>O(n log n) &mdash; same in every case since Merge Sort always splits and merges the full array</td></tr>
+      <tr><td>Space</td><td>O(n) auxiliary (for the merge buffers)</td></tr>
+    </table>
+    <p>Because Merge Sort's performance doesn't depend on the initial ordering of either spreadsheet,
+    it is a safe, predictable choice here versus e.g. Quick Sort's O(n&sup2;) worst case.</p>
+  </div>
+</section>
+
+
+<section class="problem" id="q5">
+  <span class="tag">Graph Algorithm &mdash; Single-Source Shortest Path</span>
+  <h2>5. Dijkstra's Algorithm &mdash; Optimizing Delivery Routes for a Local Pharmacy</h2>
+  <p>Mr. Das needs the shortest travel time from a single source (Pharmacy P) to every customer/intersection.
+  All road travel times are positive, so <b>Dijkstra's Algorithm</b> applies directly.</p>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Model the road network as a weighted directed graph: vertices = {P, I1, I2, I3, C1, C2, C3, C4}, edges = roads with travel-time weights.</li>
+    <li>Initialise dist[P] = 0 and dist[v] = &infin; for every other vertex; mark all vertices unvisited.</li>
+    <li>Repeat until all vertices are visited:
+      <ul>
+        <li>Pick the unvisited vertex u with the smallest dist[u] (via a min-priority-queue / min-heap).</li>
+        <li>Mark u visited.</li>
+        <li>For every edge (u &rarr; v) with weight w: <b>relax</b> &mdash; if dist[u] + w &lt; dist[v], update dist[v] = dist[u] + w.</li>
+      </ul>
+    </li>
+    <li>dist[] now holds the shortest travel time from P to every location.</li>
+  </ol>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;limits.h&gt;
+
+#define V 8
+#define INF INT_MAX
+
+int minDistance(int dist[], int visited[]) {
+    int min = INF, minIndex = -1;
+    for (int v = 0; v &lt; V; v++)
+        if (!visited[v] &amp;&amp; dist[v] &lt;= min) { min = dist[v]; minIndex = v; }
+    return minIndex;
+}
+
+void dijkstra(int graph[V][V], int src, char *names[]) {
+    int dist[V], visited[V] = {0};
+    for (int i = 0; i &lt; V; i++) dist[i] = INF;
+    dist[src] = 0;
+
+    for (int count = 0; count &lt; V - 1; count++) {
+        int u = minDistance(dist, visited);
+        if (u == -1) break;
+        visited[u] = 1;
+        for (int v = 0; v &lt; V; v++)
+            if (!visited[v] &amp;&amp; graph[u][v] &amp;&amp; dist[u] != INF &amp;&amp;
+                dist[u] + graph[u][v] &lt; dist[v])
+                dist[v] = dist[u] + graph[u][v];
+    }
+
+    printf(&quot;Shortest travel time from %s:\n&quot;, names[src]);
+    for (int i = 0; i &lt; V; i++)
+        printf(&quot;  to %s: %d min\n&quot;, names[i], dist[i]);
+}
+
+int main() {
+    char *names[V] = {&quot;P&quot;, &quot;I1&quot;, &quot;I2&quot;, &quot;I3&quot;, &quot;C1&quot;, &quot;C2&quot;, &quot;C3&quot;, &quot;C4&quot;};
+    int graph[V][V] = {0};
+    /* indices: P=0 I1=1 I2=2 I3=3 C1=4 C2=5 C3=6 C4=7 */
+    graph[0][1] = 5;  graph[0][2] = 7;
+    graph[1][4] = 3;  graph[1][5] = 6;  graph[1][3] = 4;
+    graph[2][5] = 4;  graph[2][7] = 3;  graph[2][3] = 2;
+    graph[3][2] = 2;  graph[3][6] = 5;  graph[3][1] = 5;
+    graph[4][1] = 4;  graph[5][2] = 3;  graph[6][0] = 15; graph[7][2] = 2;
+
+    dijkstra(graph, 0, names);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">import heapq
+
+def dijkstra(graph, src):
+    dist = {v: float(&#x27;inf&#x27;) for v in graph}
+    dist[src] = 0
+    pq = [(0, src)]
+    visited = set()
+
+    while pq:
+        d, u = heapq.heappop(pq)
+        if u in visited:
+            continue
+        visited.add(u)
+        for v, w in graph[u]:
+            if d + w &lt; dist[v]:
+                dist[v] = d + w
+                heapq.heappush(pq, (dist[v], v))
+    return dist
+
+
+if __name__ == &quot;__main__&quot;:
+    graph = {
+        &quot;P&quot;:  [(&quot;I1&quot;, 5), (&quot;I2&quot;, 7)],
+        &quot;I1&quot;: [(&quot;C1&quot;, 3), (&quot;C2&quot;, 6), (&quot;I3&quot;, 4)],
+        &quot;I2&quot;: [(&quot;C2&quot;, 4), (&quot;C4&quot;, 3), (&quot;I3&quot;, 2)],
+        &quot;I3&quot;: [(&quot;I2&quot;, 2), (&quot;C3&quot;, 5), (&quot;I1&quot;, 5)],
+        &quot;C1&quot;: [(&quot;I1&quot;, 4)],
+        &quot;C2&quot;: [(&quot;I2&quot;, 3)],
+        &quot;C3&quot;: [(&quot;P&quot;, 15)],
+        &quot;C4&quot;: [(&quot;I2&quot;, 2)],
+    }
+    distances = dijkstra(graph, &quot;P&quot;)
+    for loc, d in distances.items():
+        print(f&quot;P -&gt; {loc}: {d} min&quot;)
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Implementation</th><th>Time</th><th>Space</th></tr>
+      <tr><td>Array-based min extraction (simple, used in the C code above)</td><td>O(V&sup2;)</td><td>O(V&sup2;) for adjacency matrix</td></tr>
+      <tr><td>Binary min-heap + adjacency list (used in the Python code above)</td><td>O((V + E) log V)</td><td>O(V + E)</td></tr>
+      <tr><td>Fibonacci heap (theoretical optimum)</td><td>O(E + V log V)</td><td>O(V + E)</td></tr>
+    </table>
+    <p>For this small road network (V = 8, E = 14) either implementation runs essentially instantly;
+    the heap-based version becomes important as the road network grows toward a full city map.</p>
+  </div>
+</section>
+
+
+<section class="problem" id="q6">
+  <span class="tag">Graph Algorithm &mdash; All-Pairs Shortest Path</span>
+  <h2>6. Floyd&ndash;Warshall Algorithm &mdash; Optimizing Inter-Branch Logistics</h2>
+  <p>Mr. Roy needs the shortest travel time between <i>every pair</i> of branches/warehouse, computed once
+  and reused for any query &mdash; this is the <b>All-Pairs Shortest Path</b> problem, solved efficiently with
+  the <b>Floyd&ndash;Warshall</b> dynamic-programming algorithm (works even with mixed, non-uniform directed weights).
+  <i>Note: the problem statement does not supply an explicit graph for this scenario (only example queries),
+  so a representative 5-location example (Warehouse + 4 branches) is used below to demonstrate the algorithm and code &mdash;
+  the same code works unchanged on the real MegaMart travel-time matrix.</i></p>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Number the n locations 1..n. Build an n&times;n matrix dist[][] where dist[i][j] = direct travel time
+    from i to j if a road exists, dist[i][i] = 0, and dist[i][j] = &infin; if no direct road exists.</li>
+    <li>For each intermediate vertex k = 1 to n:
+      <ul>
+        <li>For each pair (i, j): if dist[i][k] + dist[k][j] &lt; dist[i][j], update
+        dist[i][j] = dist[i][k] + dist[k][j] &mdash; i.e., check whether routing through k gives a shorter path.</li>
+      </ul>
+    </li>
+    <li>After considering all n intermediate vertices, dist[i][j] holds the shortest travel time between every pair (i, j).</li>
+    <li>The largest finite value in the resulting matrix identifies the two branches that are <i>furthest apart</i> (Mr. Roy's third question).</li>
+  </ol>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+#define V 5
+#define INF 99999
+
+void floydWarshall(int graph[V][V], char *names[]) {
+    int dist[V][V];
+    for (int i = 0; i &lt; V; i++)
+        for (int j = 0; j &lt; V; j++)
+            dist[i][j] = graph[i][j];
+
+    for (int k = 0; k &lt; V; k++)
+        for (int i = 0; i &lt; V; i++)
+            for (int j = 0; j &lt; V; j++)
+                if (dist[i][k] + dist[k][j] &lt; dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+
+    printf(&quot;All-pairs shortest travel times (minutes):\n&quot;);
+    printf(&quot;%10s&quot;, &quot;&quot;);
+    for (int j = 0; j &lt; V; j++) printf(&quot;%10s&quot;, names[j]);
+    printf(&quot;\n&quot;);
+    for (int i = 0; i &lt; V; i++) {
+        printf(&quot;%10s&quot;, names[i]);
+        for (int j = 0; j &lt; V; j++) {
+            if (dist[i][j] &gt;= INF) printf(&quot;%10s&quot;, &quot;INF&quot;);
+            else printf(&quot;%10d&quot;, dist[i][j]);
+        }
+        printf(&quot;\n&quot;);
+    }
+}
+
+int main() {
+    /* No explicit graph was given for this problem in the statement, so a
+       representative 5-location example (Warehouse + 4 branches) is used.
+       Substitute the real MegaMart travel-time matrix as needed. */
+    char *names[V] = {&quot;Warehouse&quot;, &quot;BranchA&quot;, &quot;BranchB&quot;, &quot;BranchC&quot;, &quot;BranchD&quot;};
+    int graph[V][V] = {
+        {0,   10,  INF, 30,  INF},
+        {10,  0,   15,  INF, 20},
+        {INF, 15,  0,   5,   INF},
+        {30,  INF, 5,   0,   8},
+        {INF, 20,  INF, 8,   0}
+    };
+    floydWarshall(graph, names);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">INF = float(&#x27;inf&#x27;)
+
+def floyd_warshall(graph):
+    n = len(graph)
+    dist = [row[:] for row in graph]
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][k] + dist[k][j] &lt; dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+    return dist
+
+
+if __name__ == &quot;__main__&quot;:
+    # Representative example: Warehouse + 4 branches (no explicit graph
+    # was given in the problem statement -- substitute the real
+    # MegaMart travel-time matrix as needed).
+    names = [&quot;Warehouse&quot;, &quot;BranchA&quot;, &quot;BranchB&quot;, &quot;BranchC&quot;, &quot;BranchD&quot;]
+    graph = [
+        [0,   10,  INF, 30,  INF],
+        [10,  0,   15,  INF, 20],
+        [INF, 15,  0,   5,   INF],
+        [30,  INF, 5,   0,   8],
+        [INF, 20,  INF, 8,   0],
+    ]
+    dist = floyd_warshall(graph)
+    print(&quot;All-pairs shortest travel times (minutes):&quot;)
+    for i, row in enumerate(dist):
+        print(names[i], row)
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Metric</th><th>Complexity</th></tr>
+      <tr><td>Time (all cases &mdash; triple nested loop over n vertices)</td><td>O(V&sup3;)</td></tr>
+      <tr><td>Space</td><td>O(V&sup2;) for the distance matrix</td></tr>
+    </table>
+    <p>Floyd&ndash;Warshall is preferred here over running Dijkstra from every vertex (O(V &middot; (V+E) log V))
+    because it is simpler to implement, works uniformly on a dense adjacency matrix, and computing the whole
+    table once lets Mr. Roy answer <i>any</i> future pairwise query in O(1) lookup time.</p>
+  </div>
+</section>
+
+
+<section class="problem" id="q7">
+  <span class="tag">Backtracking</span>
+  <h2>7. N-Queens (Backtracking) &mdash; Strategic Placement of Emergency Service Hubs</h2>
+  <p>Placing 6 hubs on a 6&times;6 grid such that no two share a row, column, or diagonal is exactly the
+  classic <b>N-Queens</b> problem (N = 6). The urban planners want <i>all</i> valid configurations, so a
+  full backtracking search (rather than stopping at the first solution) is used.</p>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Represent the placement as board[row] = column, i.e., process the grid row by row and place exactly one hub per row (guarantees the row constraint automatically).</li>
+    <li>For row = 0: try every column 0..N&minus;1.</li>
+    <li>A placement at (row, col) is <b>safe</b> if no previously placed hub shares:
+      <ul>
+        <li>the same column: board[i] == col,</li>
+        <li>the same main diagonal: board[i] &minus; i == col &minus; row,</li>
+        <li>the same anti-diagonal: board[i] + i == col + row, for all earlier rows i.</li>
+      </ul>
+    </li>
+    <li>If safe, place the hub (board[row] = col) and recurse to row + 1.</li>
+    <li>If row == N, a complete valid configuration has been found &mdash; record/print it.</li>
+    <li><b>Backtrack:</b> after exploring a column choice (or if no column in the current row is safe), remove the hub and try the next column; if all columns are exhausted, backtrack to the previous row.</li>
+    <li>Continue until every possibility has been explored, collecting every valid configuration.</li>
+  </ol>
+  <p>For N = 6 there are exactly <b>4 valid configurations</b> (a well-known result of the 6-Queens problem).</p>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdbool.h&gt;
+
+#define N 6
+int board[N];
+int solutionCount = 0;
+
+bool isSafe(int row, int col) {
+    for (int i = 0; i &lt; row; i++) {
+        if (board[i] == col ||
+            board[i] - i == col - row ||
+            board[i] + i == col + row)
+            return false;
+    }
+    return true;
+}
+
+void solve(int row) {
+    if (row == N) {
+        solutionCount++;
+        printf(&quot;Solution %d: &quot;, solutionCount);
+        for (int i = 0; i &lt; N; i++) printf(&quot;(row %d, col %d) &quot;, i, board[i]);
+        printf(&quot;\n&quot;);
+        return;
+    }
+    for (int col = 0; col &lt; N; col++) {
+        if (isSafe(row, col)) {
+            board[row] = col;
+            solve(row + 1);
+        }
+    }
+}
+
+int main() {
+    solve(0);
+    printf(&quot;Total valid configurations for %d hubs on %dx%d grid: %d\n&quot;,
+           N, N, N, solutionCount);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">N = 6
+
+def is_safe(board, row, col):
+    for i in range(row):
+        if board[i] == col or abs(board[i] - col) == row - i:
+            return False
+    return True
+
+def solve(board, row, solutions):
+    if row == N:
+        solutions.append(board[:])
+        return
+    for col in range(N):
+        if is_safe(board, row, col):
+            board[row] = col
+            solve(board, row + 1, solutions)
+            board[row] = -1
+
+if __name__ == &quot;__main__&quot;:
+    board = [-1] * N
+    solutions = []
+    solve(board, 0, solutions)
+    for idx, sol in enumerate(solutions, 1):
+        print(f&quot;Solution {idx}: {[(r, c) for r, c in enumerate(sol)]}&quot;)
+    print(f&quot;Total valid configurations for {N} hubs on {N}x{N} grid: {len(solutions)}&quot;)
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Metric</th><th>Complexity</th></tr>
+      <tr><td>Worst-case time (naive upper bound)</td><td>O(N!) &mdash; N choices for row 0, at most N&minus;1 for row 1, etc.</td></tr>
+      <tr><td>Practical time</td><td>Much smaller than N! due to early pruning by isSafe() cutting off invalid branches before they fully expand</td></tr>
+      <tr><td>isSafe() check</td><td>O(N) per call (can be reduced to O(1) using boolean column/diagonal tracking arrays)</td></tr>
+      <tr><td>Space</td><td>O(N) for the board array + O(N) recursion depth</td></tr>
+    </table>
+    <p>Backtracking is used instead of brute force (checking all N<sup>N</sup> or C(N&sup2;,N) placements)
+    because it abandons a partial placement the moment a conflict is detected, drastically pruning the search tree.</p>
+  </div>
+</section>
+
+
+<section class="problem" id="q8">
+  <span class="tag">Dynamic Programming</span>
+  <h2>8. Matrix Chain Multiplication &mdash; Optimizing Data Transformation Workflow</h2>
+  <p>The fixed pipeline N &rarr; F &rarr; D &rarr; C is a chain of 4 matrix multiplications
+  M1&times;M2&times;M3&times;M4. Since matrix multiplication is associative, the grouping (parenthesization)
+  affects the total scalar multiplication cost &mdash; solved optimally with the
+  <b>Matrix Chain Multiplication (MCM)</b> dynamic-programming algorithm.</p>
+
+  <table>
+    <tr><th>Matrix</th><th>Dimensions</th></tr>
+    <tr><td>M1 (Normalization)</td><td>2000 &times; 10000</td></tr>
+    <tr><td>M2 (Feature Selection)</td><td>10000 &times; 5000</td></tr>
+    <tr><td>M3 (Dimensionality Reduction)</td><td>5000 &times; 500</td></tr>
+    <tr><td>M4 (Clustering Analysis)</td><td>500 &times; 50</td></tr>
+  </table>
+  <p>Dimension array p = [2000, 10000, 5000, 500, 50] (matrix M<sub>i</sub> has dimensions p[i&minus;1] &times; p[i]).</p>
+
+  <h3>Algorithm</h3>
+  <ol class="algo">
+    <li>Let dp[i][j] = minimum scalar multiplications needed to compute the product M<sub>i</sub>&times;&hellip;&times;M<sub>j</sub>.</li>
+    <li>Base case: dp[i][i] = 0 (a single matrix needs no multiplication).</li>
+    <li>For chain length L = 2 to n (n = number of matrices = 4):
+      <ul>
+        <li>For every starting index i where j = i + L &minus; 1 &le; n:
+          <ul>
+            <li>dp[i][j] = min over all split points k (i &le; k &lt; j) of:
+            dp[i][k] + dp[k+1][j] + p[i&minus;1]&times;p[k]&times;p[j]</li>
+            <li>Record the best split point k in split[i][j] (for reconstructing the parenthesization).</li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li>dp[1][n] holds the minimum total scalar multiplications for the whole chain.</li>
+    <li>Recursively reconstruct the optimal grouping from the split[][] table.</li>
+  </ol>
+  <p><b>Result for this instance</b> (as computed by the DP table / program above): the optimal grouping is
+  <b>(M1&times;(M2&times;(M3&times;M4)))</b> &mdash; i.e. first multiply M3&times;M4, then multiply that result
+  by M2, and finally by M1 &mdash; giving a minimum cost of <b>3,625,000,000 scalar multiplications</b>,
+  far fewer than the na&iuml;ve left-to-right grouping ((M1&times;M2)&times;M3)&times;M4, which costs
+  100,000,000,000 + 5,000,000,000 + 50,000,000 = 105,050,000,000 multiplications.</p>
+
+  <h3>C and Python Implementation</h3>
+  
+      <div class="code-tabs">
+        <div class="code-block">
+          <div class="code-label">C</div>
+          <pre><code class="language-c">#include &lt;stdio.h&gt;
+
+#define N 5   /* p[] has n+1 = 5 elements for 4 matrices */
+
+/* long long is required: costs here exceed 2^31 and overflow a plain int */
+long long dp[N][N];
+int split[N][N];
+
+void printOptimalOrder(int i, int j, char *names[]) {
+    if (i == j) {
+        printf(&quot;%s&quot;, names[i - 1]);
+        return;
+    }
+    printf(&quot;(&quot;);
+    printOptimalOrder(i, split[i][j], names);
+    printOptimalOrder(split[i][j] + 1, j, names);
+    printf(&quot;)&quot;);
+}
+
+int main() {
+    long long p[] = {2000, 10000, 5000, 500, 50};   /* dims for M1..M4 */
+    char *names[] = {&quot;M1&quot;, &quot;M2&quot;, &quot;M3&quot;, &quot;M4&quot;};
+    int n = 4;   /* number of matrices */
+
+    for (int i = 1; i &lt;= n; i++) dp[i][i] = 0;
+
+    for (int len = 2; len &lt;= n; len++) {
+        for (int i = 1; i &lt;= n - len + 1; i++) {
+            int j = i + len - 1;
+            dp[i][j] = -1;
+            for (int k = i; k &lt; j; k++) {
+                long long cost = dp[i][k] + dp[k + 1][j] + p[i - 1] * p[k] * p[j];
+                if (dp[i][j] == -1 || cost &lt; dp[i][j]) {
+                    dp[i][j] = cost;
+                    split[i][j] = k;
+                }
+            }
+        }
+    }
+
+    printf(&quot;Minimum scalar multiplications = %lld\n&quot;, dp[1][n]);
+    printf(&quot;Optimal parenthesization: &quot;);
+    printOptimalOrder(1, n, names);
+    printf(&quot;\n&quot;);
+    return 0;
+}
+</code></pre>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Python</div>
+          <pre><code class="language-python">def matrix_chain_order(p):
+    n = len(p) - 1  # number of matrices
+    dp = [[0] * (n + 1) for _ in range(n + 1)]
+    split = [[0] * (n + 1) for _ in range(n + 1)]
+
+    for length in range(2, n + 1):
+        for i in range(1, n - length + 2):
+            j = i + length - 1
+            dp[i][j] = float(&#x27;inf&#x27;)
+            for k in range(i, j):
+                cost = dp[i][k] + dp[k + 1][j] + p[i - 1] * p[k] * p[j]
+                if cost &lt; dp[i][j]:
+                    dp[i][j] = cost
+                    split[i][j] = k
+    return dp, split
+
+
+def print_optimal_order(split, i, j, names):
+    if i == j:
+        return names[i - 1]
+    left = print_optimal_order(split, i, split[i][j], names)
+    right = print_optimal_order(split, split[i][j] + 1, j, names)
+    return f&quot;({left}{right})&quot;
+
+
+if __name__ == &quot;__main__&quot;:
+    p = [2000, 10000, 5000, 500, 50]
+    names = [&quot;M1&quot;, &quot;M2&quot;, &quot;M3&quot;, &quot;M4&quot;]
+    dp, split = matrix_chain_order(p)
+    n = len(names)
+    print(f&quot;Minimum scalar multiplications = {dp[1][n]}&quot;)
+    print(&quot;Optimal parenthesization:&quot;, print_optimal_order(split, 1, n, names))
+</code></pre>
+        </div>
+      </div>
+
+
+  <h3>Time Complexity</h3>
+  <div class="complexity">
+    <table>
+      <tr><th>Metric</th><th>Complexity</th></tr>
+      <tr><td>Time</td><td>O(n&sup3;) &mdash; three nested loops over chain length L, start index i, and split point k</td></tr>
+      <tr><td>Space</td><td>O(n&sup2;) for the dp[][] and split[][] tables</td></tr>
+    </table>
+    <p>This is vastly better than the brute-force approach of trying every possible parenthesization,
+    whose count grows as the Catalan number C<sub>n&minus;1</sub>, i.e. exponential time &Omega;(4<sup>n</sup> / n<sup>1.5</sup>).</p>
+  </div>
+</section>
+</main>
+<footer>Prepared as a DAA lab answer script &middot; algorithms, C/Python code, and complexity analysis</footer>
+</body>
+</html>
